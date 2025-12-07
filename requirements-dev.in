@@ -5,3 +5,5 @@ pytest
 pytest-cov
 pip-tools
 pre-commit
+mypy
+bandit
