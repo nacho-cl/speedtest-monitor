@@ -1,0 +1,23 @@
+#!/bin/sh
+
+branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+case "$branch" in
+  develop|stagin|main) ;;
+  *)
+    echo "pre-push skipped on branch '$branch' (only runs on develop, stagin, main)"
+    exit 0
+    ;;
+esac
+
+if command -v pre-commit >/dev/null 2>&1; then
+  PRE_COMMIT=pre-commit
+elif [ -x ".venv/Scripts/pre-commit" ]; then
+  PRE_COMMIT=".venv/Scripts/pre-commit"
+elif [ -x ".venv/bin/pre-commit" ]; then
+  PRE_COMMIT=".venv/bin/pre-commit"
+else
+  echo "pre-commit not installed; install with 'pip install pre-commit'" >&2
+  exit 1
+fi
+
+exec "$PRE_COMMIT" run --hook-stage push "$@"
