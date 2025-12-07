@@ -18,7 +18,10 @@ repos:
     rev: 1.7.10
     hooks:
       - id: bandit
-        args: ["-q", "-r", "."]
+        args: ["-q", "-r", ".", "-x", ".venv,chronograf-1.8.6-1"]
+        language_version: python3
+        env:
+          PYTHONIOENCODING: "utf-8"
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.13.0
     hooks:
