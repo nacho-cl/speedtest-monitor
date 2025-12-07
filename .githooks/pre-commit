@@ -20,4 +20,4 @@ else
   exit 1
 fi
 
-exec "$PRE_COMMIT" run --hook-stage commit "$@"
+exec "$PRE_COMMIT" run --hook-stage commit --all-files
