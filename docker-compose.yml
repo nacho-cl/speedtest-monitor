@@ -31,7 +31,7 @@ services:
       - speedtest-data:/data
     depends_on:
       - influxdb
-    command: ["sh", "-c", "while true; do python speedtestdb.py; sleep ${INTERVAL_SECONDS}; done"]
+    command: ["sh", "-c", "while true; do python -m app.speedtestdb; sleep ${INTERVAL_SECONDS}; done"]
     networks:
       - internal
 

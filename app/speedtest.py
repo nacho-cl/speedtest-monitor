@@ -1,13 +1,16 @@
 import os
 import re
-import subprocess
+import subprocess  # nosec B404
 import time
 from pathlib import Path
 
 
 def run_speedtest() -> tuple[str, str, str]:
-    response = subprocess.check_output(
-        ["speedtest-cli", "--simple"], text=True, stderr=subprocess.STDOUT, timeout=120
+    response = subprocess.check_output(  # nosec
+        ["speedtest-cli", "--simple"],
+        text=True,
+        stderr=subprocess.STDOUT,
+        timeout=120,
     )
 
     ping = re.findall(r"Ping:\s(.*?)\s", response, re.MULTILINE)

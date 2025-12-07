@@ -22,7 +22,7 @@ RUN apt-get update \
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY speedtest.py speedtestdb.py ./
+COPY app/ ./app/
 RUN mkdir -p /data && chown -R "${APP_UID}:${APP_GID}" /app /data
 
 # SemVer de la imagen
@@ -31,4 +31,4 @@ LABEL org.opencontainers.image.version="${APP_VERSION}"
 USER ${APP_UID}
 
 # Por defecto envía métricas a InfluxDB
-CMD ["python", "speedtestdb.py"]
+CMD ["python", "-m", "app.speedtestdb"]

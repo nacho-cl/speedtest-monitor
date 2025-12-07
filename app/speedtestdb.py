@@ -1,6 +1,6 @@
 import os
 import re
-import subprocess
+import subprocess  # nosec B404
 from typing import Dict, List
 
 from influxdb import InfluxDBClient
@@ -8,8 +8,11 @@ from influxdb import InfluxDBClient
 
 def run_speedtest() -> Dict[str, float]:
     """Ejecuta speedtest y parsea resultados, devolviendo ping/download/upload."""
-    response = subprocess.check_output(
-        ["speedtest-cli", "--simple"], text=True, stderr=subprocess.STDOUT, timeout=120
+    response = subprocess.check_output(  # nosec
+        ["speedtest-cli", "--simple"],
+        text=True,
+        stderr=subprocess.STDOUT,
+        timeout=120,
     )
     ping = re.findall(r"Ping:\s(.*?)\s", response, re.MULTILINE)
     download = re.findall(r"Download:\s(.*?)\s", response, re.MULTILINE)
