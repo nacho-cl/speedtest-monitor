@@ -6,26 +6,29 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PIP_DEFAULT_TIMEOUT=100
 
+ARG APP_VERSION=0.3.0
+ARG APP_USER=appuser
+ARG APP_UID=1000
+ARG APP_GID=1000
+
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends speedtest-cli \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get install -y --no-install-recommends speedtest-cli ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid "${APP_GID}" "${APP_USER}" \
+    && useradd --uid "${APP_UID}" --gid "${APP_GID}" --create-home "${APP_USER}"
 
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY speedtest.py speedtestdb.py ./
+RUN mkdir -p /data && chown -R "${APP_UID}:${APP_GID}" /app /data
 
-# Variables de entorno configurables (12-factor)
-ENV INFLUX_HOST=localhost \
-    INFLUX_PORT=8086 \
-    INFLUX_USER=speedmonitor \
-    INFLUX_PASSWORD=speedmonitor \
-    INFLUX_DB=internetspeed \
-    INFLUX_MEASUREMENT=internet_speed \
-    HOST_TAG=speedtest-monitor \
-    CSV_PATH=/data/speedtest.csv
+# SemVer de la imagen
+LABEL org.opencontainers.image.version="${APP_VERSION}"
+
+USER ${APP_UID}
 
 # Por defecto envía métricas a InfluxDB
 CMD ["python", "speedtestdb.py"]

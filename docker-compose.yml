@@ -4,9 +4,9 @@ services:
     container_name: influxdb
     restart: unless-stopped
     environment:
-      INFLUXDB_DB: ${INFLUX_DB:-internetspeed}
-      INFLUXDB_ADMIN_USER: ${INFLUX_USER:-speedmonitor}
-      INFLUXDB_ADMIN_PASSWORD: ${INFLUX_PASSWORD:-speedmonitor}
+      INFLUXDB_DB: ${INFLUX_DB}
+      INFLUXDB_ADMIN_USER: ${INFLUX_USER}
+      INFLUXDB_ADMIN_PASSWORD: ${INFLUX_PASSWORD}
     volumes:
       - influxdb-data:/var/lib/influxdb
     networks:
@@ -18,20 +18,20 @@ services:
     container_name: speedtest-monitor
     restart: unless-stopped
     environment:
-      INFLUX_HOST: ${INFLUX_HOST:-influxdb}
-      INFLUX_PORT: ${INFLUX_PORT:-8086}
-      INFLUX_USER: ${INFLUX_USER:-speedmonitor}
-      INFLUX_PASSWORD: ${INFLUX_PASSWORD:-speedmonitor}
-      INFLUX_DB: ${INFLUX_DB:-internetspeed}
-      INFLUX_MEASUREMENT: ${INFLUX_MEASUREMENT:-internet_speed}
-      HOST_TAG: ${HOST_TAG:-speedtest-monitor}
-      CSV_PATH: ${CSV_PATH:-/data/speedtest.csv}
-      INTERVAL_SECONDS: ${INTERVAL_SECONDS:-300}
+      INFLUX_HOST: ${INFLUX_HOST}
+      INFLUX_PORT: ${INFLUX_PORT}
+      INFLUX_USER: ${INFLUX_USER}
+      INFLUX_PASSWORD: ${INFLUX_PASSWORD}
+      INFLUX_DB: ${INFLUX_DB}
+      INFLUX_MEASUREMENT: ${INFLUX_MEASUREMENT}
+      HOST_TAG: ${HOST_TAG}
+      CSV_PATH: ${CSV_PATH}
+      INTERVAL_SECONDS: ${INTERVAL_SECONDS}
     volumes:
       - speedtest-data:/data
     depends_on:
       - influxdb
-    command: ["sh", "-c", "while true; do python speedtestdb.py; sleep ${INTERVAL_SECONDS:-300}; done"]
+    command: ["sh", "-c", "while true; do python speedtestdb.py; sleep ${INTERVAL_SECONDS}; done"]
     networks:
       - internal
 
@@ -40,13 +40,13 @@ services:
     container_name: grafana
     restart: unless-stopped
     environment:
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
-      INFLUX_HOST: ${INFLUX_HOST:-influxdb}
-      INFLUX_PORT: ${INFLUX_PORT:-8086}
-      INFLUX_USER: ${INFLUX_USER:-speedmonitor}
-      INFLUX_PASSWORD: ${INFLUX_PASSWORD:-speedmonitor}
-      INFLUX_DB: ${INFLUX_DB:-internetspeed}
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      INFLUX_HOST: ${INFLUX_HOST}
+      INFLUX_PORT: ${INFLUX_PORT}
+      INFLUX_USER: ${INFLUX_USER}
+      INFLUX_PASSWORD: ${INFLUX_PASSWORD}
+      INFLUX_DB: ${INFLUX_DB}
     ports:
       - "${GRAFANA_PORT:-3100}:3000"
     volumes:
