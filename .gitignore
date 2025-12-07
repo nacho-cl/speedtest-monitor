@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+
+# Environments
+.venv/
+env/
+venv/
+
+# Packaging / builds
+build/
+dist/
+*.egg-info/
+
+# Editors / OS
+.DS_Store
+*.log
+
+# Docker artifacts
+.dockerignore
+
+# Environment
+.env
+
+# Local data
+speedtest.csv
+data/

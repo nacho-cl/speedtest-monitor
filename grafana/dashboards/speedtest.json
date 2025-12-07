@@ -1,0 +1,178 @@
+{
+  "id": null,
+  "uid": "speedtest",
+  "title": "Speedtest Monitor",
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 6,
+  "refresh": "5m",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Ping (ms)",
+      "gridPos": { "x": 0, "y": 0, "w": 8, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "SELECT last(ping) AS ping FROM internet_speed",
+          "rawQuery": true,
+          "resultFormat": "time_series"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Download (Mbit/s)",
+      "gridPos": { "x": 8, "y": 0, "w": 8, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbits",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 150 },
+              { "color": "green", "value": 200 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "B",
+          "query": "SELECT last(download) AS download FROM internet_speed",
+          "rawQuery": true,
+          "resultFormat": "time_series"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Upload (Mbit/s)",
+      "gridPos": { "x": 16, "y": 0, "w": 8, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbits",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 150 },
+              { "color": "green", "value": 200 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "C",
+          "query": "SELECT last(upload) AS upload FROM internet_speed",
+          "rawQuery": true,
+          "resultFormat": "time_series"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Ping",
+      "gridPos": { "x": 0, "y": 4, "w": 24, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "always",
+            "pointSize": 4,
+            "spanNulls": true,
+            "axisPlacement": "left",
+            "axisSoftMin": 0
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "D",
+          "query": "SELECT last(ping) AS ping FROM internet_speed WHERE $timeFilter GROUP BY time($__interval) fill(previous)",
+          "rawQuery": true,
+          "resultFormat": "time_series"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Download / Upload",
+      "gridPos": { "x": 0, "y": 12, "w": 24, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbits",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "showPoints": "always",
+            "pointSize": 4,
+            "spanNulls": true
+          }
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "E",
+          "query": "SELECT last(download) AS \"Download\" FROM internet_speed WHERE $timeFilter GROUP BY time($__interval) fill(previous)",
+          "rawQuery": true,
+          "resultFormat": "time_series"
+        },
+        {
+          "refId": "F",
+          "query": "SELECT last(upload) AS \"Upload\" FROM internet_speed WHERE $timeFilter GROUP BY time($__interval) fill(previous)",
+          "rawQuery": true,
+          "resultFormat": "time_series"
+        }
+      ]
+    }
+  ],
+  "templating": {
+    "list": []
+  }
+}

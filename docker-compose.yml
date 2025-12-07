@@ -1,0 +1,72 @@
+services:
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    restart: unless-stopped
+    environment:
+      INFLUXDB_DB: ${INFLUX_DB:-internetspeed}
+      INFLUXDB_ADMIN_USER: ${INFLUX_USER:-speedmonitor}
+      INFLUXDB_ADMIN_PASSWORD: ${INFLUX_PASSWORD:-speedmonitor}
+    volumes:
+      - influxdb-data:/var/lib/influxdb
+    networks:
+      - internal
+
+  speedtest:
+    build: .
+    image: speedtest-monitor:latest
+    container_name: speedtest-monitor
+    restart: unless-stopped
+    environment:
+      INFLUX_HOST: ${INFLUX_HOST:-influxdb}
+      INFLUX_PORT: ${INFLUX_PORT:-8086}
+      INFLUX_USER: ${INFLUX_USER:-speedmonitor}
+      INFLUX_PASSWORD: ${INFLUX_PASSWORD:-speedmonitor}
+      INFLUX_DB: ${INFLUX_DB:-internetspeed}
+      INFLUX_MEASUREMENT: ${INFLUX_MEASUREMENT:-internet_speed}
+      HOST_TAG: ${HOST_TAG:-speedtest-monitor}
+      CSV_PATH: ${CSV_PATH:-/data/speedtest.csv}
+      INTERVAL_SECONDS: ${INTERVAL_SECONDS:-300}
+    volumes:
+      - speedtest-data:/data
+    depends_on:
+      - influxdb
+    command: ["sh", "-c", "while true; do python speedtestdb.py; sleep ${INTERVAL_SECONDS:-300}; done"]
+    networks:
+      - internal
+
+  grafana:
+    image: grafana/grafana-oss:11.2.0
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      INFLUX_HOST: ${INFLUX_HOST:-influxdb}
+      INFLUX_PORT: ${INFLUX_PORT:-8086}
+      INFLUX_USER: ${INFLUX_USER:-speedmonitor}
+      INFLUX_PASSWORD: ${INFLUX_PASSWORD:-speedmonitor}
+      INFLUX_DB: ${INFLUX_DB:-internetspeed}
+    ports:
+      - "${GRAFANA_PORT:-3100}:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - influxdb
+    networks:
+      - internal
+
+volumes:
+  speedtest-data:
+    driver: local
+  influxdb-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  internal:
+    driver: bridge
