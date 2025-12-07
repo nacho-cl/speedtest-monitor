@@ -9,3 +9,5 @@ pip-tools
 pytest
 pytest-cov
 ruff
+isort
+pre-commit
