@@ -7,6 +7,12 @@ services:
       INFLUXDB_DB: ${INFLUX_DB}
       INFLUXDB_ADMIN_USER: ${INFLUX_USER}
       INFLUXDB_ADMIN_PASSWORD: ${INFLUX_PASSWORD}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     volumes:
       - influxdb-data:/var/lib/influxdb
     networks:
@@ -31,6 +37,18 @@ services:
       - speedtest-data:/data
     depends_on:
       - influxdb
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import os, socket; socket.create_connection((os.getenv('INFLUX_HOST', 'influxdb'), int(os.getenv('INFLUX_PORT', '8086'))), 5).close()",
+        ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     command: ["sh", "-c", "while true; do python -m app.speedtestdb; sleep ${INTERVAL_SECONDS}; done"]
     networks:
       - internal
@@ -56,6 +74,12 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - influxdb
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
     networks:
       - internal
 

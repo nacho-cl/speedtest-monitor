@@ -20,7 +20,7 @@
       "targets": [
         {
           "refId": "A",
-          "query": "SELECT last(ping) AS ping FROM internet_speed",
+          "query": "SELECT mean(ping) AS ping FROM internet_speed",
           "rawQuery": true,
           "resultFormat": "time_series"
         }
@@ -56,7 +56,7 @@
       "targets": [
         {
           "refId": "B",
-          "query": "SELECT last(download) AS download FROM internet_speed",
+          "query": "SELECT mean(download) AS download FROM internet_speed",
           "rawQuery": true,
           "resultFormat": "time_series"
         }
@@ -92,7 +92,7 @@
       "targets": [
         {
           "refId": "C",
-          "query": "SELECT last(upload) AS upload FROM internet_speed",
+          "query": "SELECT mean(upload) AS upload FROM internet_speed",
           "rawQuery": true,
           "resultFormat": "time_series"
         }
