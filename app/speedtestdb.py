@@ -29,13 +29,13 @@ def run_speedtest() -> Dict[str, float]:
 
 
 def write_to_influx(speed: Dict[str, float]) -> None:
-    host = os.getenv("INFLUX_HOST", "localhost")
-    port = int(os.getenv("INFLUX_PORT", "8086"))
-    username = os.getenv("INFLUX_USER", "speedmonitor")
-    password = os.getenv("INFLUX_PASSWORD", "speedmonitor")
-    database = os.getenv("INFLUX_DB", "internetspeed")
-    measurement = os.getenv("INFLUX_MEASUREMENT", "internet_speed")
-    host_tag = os.getenv("HOST_TAG", "speedtest-monitor")
+    host = os.getenv("INFLUX_HOST")
+    port = int(os.getenv("INFLUX_PORT"))
+    username = os.getenv("INFLUX_USER")
+    password = os.getenv("INFLUX_PASSWORD")
+    database = os.getenv("INFLUX_DB")
+    measurement = os.getenv("INFLUX_MEASUREMENT")
+    host_tag = os.getenv("HOST_TAG")
 
     speed_data: List[dict] = [
         {
@@ -51,7 +51,7 @@ def write_to_influx(speed: Dict[str, float]) -> None:
         username=username,
         password=password,
         database=database,
-        timeout=int(os.getenv("INFLUX_TIMEOUT", "10")),
+        timeout=int(os.getenv("INFLUX_TIMEOUT")),
     )
     client.create_database(database)
     client.write_points(speed_data)
