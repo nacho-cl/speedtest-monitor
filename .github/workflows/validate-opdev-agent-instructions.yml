@@ -1,0 +1,31 @@
+name: Validate OPDev agent instructions
+
+on:
+  pull_request:
+    paths:
+      - AGENTS.md
+      - CLAUDE.md
+      - .github/copilot-instructions.md
+      - .github/scripts/validate-opdev-agent-instructions.py
+      - .github/workflows/validate-opdev-agent-instructions.yml
+  push:
+    paths:
+      - AGENTS.md
+      - CLAUDE.md
+      - .github/copilot-instructions.md
+      - .github/scripts/validate-opdev-agent-instructions.py
+      - .github/workflows/validate-opdev-agent-instructions.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      OPDEV_AGENT_RULES_SHA256: 1ea648d0a7b11ad11c842b616cc1e14b2f6fcd733ca0740862518f51ef9bb791
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check shared instruction baseline
+        run: python3 .github/scripts/validate-opdev-agent-instructions.py
